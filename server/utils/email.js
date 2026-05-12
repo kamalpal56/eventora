@@ -42,12 +42,47 @@ const sendBookingEmail = async (userEmail, userName, eventTitle) => {
     }
 };
 
+// const sendOTPEmail = async (userEmail, otp, type) => {
+//     try {
+//         const title = type === 'account_verification' ? 'Verify your Eventora Account' : 'Eventora Booking Verification';
+//         const msg = type === 'account_verification'
+//             ? 'Please use the following OTP to verify your new Eventora account.'
+//             : 'Please use the following OTP to verify and confirm your event booking.';
+
+//         const mailOptions = {
+//             from: process.env.EMAIL_USER,
+//             to: userEmail,
+//             subject: title,
+//             html: `
+//                 <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px;">
+//                     <h2 style="color: #111;">${title}</h2>
+//                     <p style="color: #555; font-size: 16px;">${msg}</p>
+//                     <div style="margin: 20px auto; padding: 15px; font-size: 24px; font-weight: bold; background: #f4f4f4; width: max-content; letter-spacing: 5px;">
+//                         ${otp}
+//                     </div>
+//                     <p style="color: #999; font-size: 12px;">This code expires in 5 minutes. If you didn't request this, please ignore this email.</p>
+//                 </div>
+//             `
+//         };
+//         await transporter.sendMail(mailOptions);
+//         console.log(`OTP sent to ${userEmail} for ${type}`);
+//     } catch (error) {
+//         console.error('Error sending OTP email:', error);
+//     }
+// };
+
 const sendOTPEmail = async (userEmail, otp, type) => {
     try {
-        const title = type === 'account_verification' ? 'Verify your Eventora Account' : 'Eventora Booking Verification';
-        const msg = type === 'account_verification'
-            ? 'Please use the following OTP to verify your new Eventora account.'
-            : 'Please use the following OTP to verify and confirm your event booking.';
+
+        const title =
+            type === 'account_verification'
+                ? 'Verify your Eventora Account'
+                : 'Eventora Booking Verification';
+
+        const msg =
+            type === 'account_verification'
+                ? 'Please use the following OTP to verify your new Eventora account.'
+                : 'Please use the following OTP to verify and confirm your event booking.';
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
@@ -55,20 +90,52 @@ const sendOTPEmail = async (userEmail, otp, type) => {
             subject: title,
             html: `
                 <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px;">
-                    <h2 style="color: #111;">${title}</h2>
-                    <p style="color: #555; font-size: 16px;">${msg}</p>
-                    <div style="margin: 20px auto; padding: 15px; font-size: 24px; font-weight: bold; background: #f4f4f4; width: max-content; letter-spacing: 5px;">
-                        ${otp}
-                    </div>
-                    <p style="color: #999; font-size: 12px;">This code expires in 5 minutes. If you didn't request this, please ignore this email.</p>
+                    <h2>${title}</h2>
+                    <p>${msg}</p>
+                    <h1>${otp}</h1>
                 </div>
             `
         };
-        await transporter.sendMail(mailOptions);
-        console.log(`OTP sent to ${userEmail} for ${type}`);
+
+        const info = await transporter.sendMail(mailOptions);
+
+        console.log("MAIL SENT:", info.response);
+
     } catch (error) {
-        console.error('Error sending OTP email:', error);
+
+        console.log("FULL EMAIL ERROR:", error);
+
+        throw error; // IMPORTANT
     }
 };
 
+
+
+
+
+transporter.verify((error, success) => {
+    if (error) {
+        console.log("VERIFY ERROR:", error);
+    } else {
+        console.log("MAIL SERVER READY");
+    }
+});
+
+
+
+
+
 module.exports = { sendBookingEmail, sendOTPEmail };
+
+
+
+
+
+
+
+
+
+
+
+
+
